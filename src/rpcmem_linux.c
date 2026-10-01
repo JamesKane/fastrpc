@@ -38,7 +38,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/types.h>
-#include <linux/types.h>
+#include "fastrpc_os_types.h"
 #include <unistd.h>
 
 #include "AEEQList.h"

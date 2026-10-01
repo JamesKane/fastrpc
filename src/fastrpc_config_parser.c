@@ -8,6 +8,9 @@
 #ifndef VERIFY_PRINT_ERROR_ALWAYS
 #define VERIFY_PRINT_ERROR_ALWAYS
 #endif // VERIFY_PRINT_ERROR_ALWAYS
+#if defined(__FreeBSD__)
+#include <kenv.h>
+#endif
 #include <dirent.h>
 #include <errno.h>
 #include <inttypes.h>
@@ -197,6 +200,17 @@ void configure_dsp_paths() {
   char machine_name[PATH_MAX] = {0};
   FILE *file = fopen(MACHINE_NAME_PATH, "r");
 
+#if defined(__FreeBSD__)
+  /*
+   * No devicetree model on an ACPI machine: SMBIOS names the board, as the
+   * model does on Linux ("Radxa Dragon Q8B").
+   */
+  if (!file && kenv(KENV_GET, "smbios.system.product", machine_name,
+                    sizeof(machine_name)) > 0) {
+    parse_config_dir(machine_name);
+    return;
+  }
+#endif
   if (file) {
     if (fgets(machine_name, sizeof(machine_name), file) != NULL)
         // Remove trailing newline if present

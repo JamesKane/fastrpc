@@ -5,7 +5,7 @@
 #define FASTRPC_INTERNAL_UPSTREAM_H
 
 #include <sys/ioctl.h>
-#include <linux/types.h>
+#include "fastrpc_os_types.h"
 
 /* File only compiled  when support to upstream kernel is required*/
 

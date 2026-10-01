@@ -82,12 +82,17 @@ AS_IF([test "$compile_for_android" = no], [
 ])
 
 # Check for libbsd only if not Android (provides strlcpy, strlcat, etc.)
-AS_IF([test "$compile_for_android" = no], [
-  PKG_CHECK_MODULES([BSD], [libbsd-overlay], [],
-    [AC_MSG_ERROR([libbsd (libbsd-overlay) is required but not found.])])
-  AC_SUBST(BSD_CFLAGS)
-  AC_SUBST(BSD_LIBS)
-])
+# libbsd supplies strlcpy and friends on Linux; FreeBSD's libc has them.
+AS_CASE([$host_os],
+  [freebsd*], [AC_SUBST(BSD_CFLAGS, [""]) AC_SUBST(BSD_LIBS, [""])
+    # Threads are in libthr, not libc: without it libc's stubs answer.
+    LIBS="$LIBS -lpthread"],
+  [AS_IF([test "$compile_for_android" = no], [
+    PKG_CHECK_MODULES([BSD], [libbsd-overlay], [],
+      [AC_MSG_ERROR([libbsd (libbsd-overlay) is required but not found.])])
+    AC_SUBST(BSD_CFLAGS)
+    AC_SUBST(BSD_LIBS)
+  ])])
 
 # Configure config base path option (--with-config-base-dir)
 AC_ARG_WITH([config-base-dir],

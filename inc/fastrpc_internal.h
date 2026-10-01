@@ -4,6 +4,7 @@
 #ifndef FASTRPC_INTERNAL_H
 #define FASTRPC_INTERNAL_H
 
+#include "fastrpc_os_types.h"
 #include <errno.h>
 #include <stdbool.h>
 #include <semaphore.h>

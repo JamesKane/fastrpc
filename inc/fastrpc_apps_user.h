@@ -6,7 +6,9 @@
 
 #include <assert.h>
 #include <fcntl.h>
+#ifndef __FreeBSD__
 #include <asm/ioctl.h>
+#endif
 #include <errno.h>
 #include <sys/time.h>
 #include <stdbool.h>
