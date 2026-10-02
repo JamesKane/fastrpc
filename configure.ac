@@ -88,11 +88,17 @@ AS_CASE([$host_os],
     # Threads are in libthr, not libc: without it libc's stubs answer.
     LIBS="$LIBS -lpthread"],
   [AS_IF([test "$compile_for_android" = no], [
-    PKG_CHECK_MODULES([BSD], [libbsd-overlay], [],
-      [AC_MSG_ERROR([libbsd (libbsd-overlay) is required but not found.])])
+    # glibc has them from 2.38; before, libbsd, or else our own copies.
+    AC_CHECK_FUNCS([strlcpy strlcat], [], [need_strl=yes])
+    AS_IF([test "x$need_strl" = xyes], [
+      PKG_CHECK_MODULES([BSD], [libbsd-overlay], [],
+        [bundled_strl=yes
+         BSD_CFLAGS='-include $(top_srcdir)/inc/fastrpc_strl.h'
+         BSD_LIBS=""])])
     AC_SUBST(BSD_CFLAGS)
     AC_SUBST(BSD_LIBS)
   ])])
+AM_CONDITIONAL([BUNDLED_STRL], [test "x$bundled_strl" = xyes])
 
 # Configure config base path option (--with-config-base-dir)
 AC_ARG_WITH([config-base-dir],

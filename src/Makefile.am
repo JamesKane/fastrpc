@@ -65,6 +65,11 @@ LIBDEFAULT_LISTENER_SOURCES = \
 				adsp_default_listener_stub.c \
 				adsp_default_listener1_stub.c
 
+if BUNDLED_STRL
+LIBDSPRPC_SOURCES += fastrpc_strl.c
+LIBDEFAULT_LISTENER_SOURCES += fastrpc_strl.c
+endif
+
 if ANDROID_CC
 USE_LOG = -llog
 libadsprpc_la_LIBADD = -ldl -lm $(USE_LOG)
